@@ -75,8 +75,12 @@
 <body class="overflow-x-hidden">
 
     <!-- BGM Audio Element -->
-    <!-- [중요] bgm.mp3 파일을 같은 폴더에 넣어주세요 -->
-    <audio id="메이플스토리-로그인.mp3" loop>
+    <!-- 
+      [수정됨] id는 "bgmAudio"로 고정해야 작동합니다. 
+      음악 파일 이름은 src="" 안에 적어주세요. 
+      예: src="메이플스토리-로그인.mp3" 
+    -->
+    <audio id="bgmAudio" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
 
@@ -122,9 +126,8 @@
             <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-[#F25E00]/10 rounded-bl-full -mr-8 -mt-8"></div>
                 
-                <!-- [중요] src를 본인 이미지 파일명으로 변경하세요 -->
                 <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-full flex items-center justify-center border-4 border-[#F25E00] shrink-0 shadow-lg relative overflow-hidden">
-                    <img src="matoring.png" class="w-full h-full object-cover">
+                    <img src="matoring.png" alt="Character Avatar" class="w-full h-full object-cover">
                     <div class="absolute bottom-0 right-0 bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white z-10">LV. Max</div>
                 </div>
 
@@ -176,7 +179,7 @@
             </div>
         </section>
 
-        <!-- 3. Skill Set Section -->
+        <!-- 3. Skill Set Section (Chart.js) -->
         <section id="skills">
             <div class="mb-6 border-l-4 border-[#F25E00] pl-4 flex justify-between items-end">
                 <div>
@@ -186,12 +189,15 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+                <!-- Chart Area -->
                 <div class="w-full flex justify-center flex-col items-center">
                      <h3 class="text-sm font-bold text-gray-400 mb-4 tracking-widest">COMPETENCY RADAR</h3>
                     <div class="chart-container">
                         <canvas id="skillChart"></canvas>
                     </div>
                 </div>
+
+                <!-- Skill Details List -->
                 <div class="space-y-4">
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
@@ -200,6 +206,7 @@
                         </div>
                         <p class="text-sm text-gray-500">Excel(고급함수), GA4, AdsP 보유. 데이터 기반 의사결정 능숙.</p>
                     </div>
+
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Localization & Global</span>
@@ -207,6 +214,7 @@
                         </div>
                         <p class="text-sm text-gray-500">다국어 로컬라이징, 글로벌 트렌드(인도네시아,말레이시아) 센싱 및 확장.</p>
                     </div>
+
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Collaboration (QA/Dev)</span>
@@ -214,6 +222,7 @@
                         </div>
                         <p class="text-sm text-gray-500">Redmine, Confluence, Figma, Firebase 활용 개발/디자인 팀 협업 경험 다수.</p>
                     </div>
+
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Performance Marketing</span>
@@ -634,4 +643,3 @@
     </script>
 </body>
 </html>
-
