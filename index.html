@@ -31,123 +31,9 @@
                 height: 350px;
             }
         }
-
-        /* Intro Overlay Styles */
-        #intro-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            backdrop-filter: blur(5px);
-            transition: opacity 0.5s ease-out;
-        }
-        
-        .start-btn {
-            background: #F25E00;
-            color: white;
-            padding: 15px 40px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border-radius: 50px;
-            border: 4px solid white;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(242, 94, 0, 0.6);
-            transition: all 0.3s;
-            animation: pulse 2s infinite;
-        }
-        
-        .start-btn:hover {
-            transform: scale(1.1);
-            background: #ff7f2a;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(242, 94, 0, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(242, 94, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(242, 94, 0, 0); }
-        }
-
-        /* BGM Player Styles */
-        .bgm-player {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #F25E00;
-            border-radius: 50px;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 100;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            cursor: pointer;
-        }
-        .bgm-player:hover { transform: scale(1.05); }
-        .equalizer-bar {
-            background-color: #F25E00;
-            width: 4px;
-            border-radius: 2px;
-            animation: bounce 1s infinite ease-in-out;
-        }
-        .equalizer-bar:nth-child(2) { animation-delay: 0.1s; height: 12px; }
-        .equalizer-bar:nth-child(3) { animation-delay: 0.2s; height: 16px; }
-        .equalizer-bar:nth-child(4) { animation-delay: 0.3s; height: 10px; }
-        
-        @keyframes bounce {
-            0%, 100% { transform: scaleY(0.5); }
-            50% { transform: scaleY(1); }
-        }
-        
-        .paused .equalizer-bar {
-            animation-play-state: paused;
-            height: 4px !important;
-            transform: scaleY(1);
-        }
     </style>
 </head>
 <body class="overflow-x-hidden">
-
-    <!-- Intro Overlay (Click to Start) -->
-    <div id="intro-overlay">
-        <div class="text-center animate-fade-in-up">
-            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tighter">MAPLE<span class="text-[#F25E00]">CAREER</span></h1>
-            <p class="text-gray-300 mb-10 text-lg">장도은 포트폴리오 월드에 입장하시겠습니까?</p>
-            <button onclick="startGame()" class="start-btn">GAME START</button>
-        </div>
-    </div>
-
-    <!-- BGM Audio Element -->
-    <!-- 파일명: bgm.mp3 또는 bgm.mp3.mp3 모두 시도 -->
-    <audio id="bgmAudio" loop>
-        <source src="bgm.mp3" type="audio/mpeg">
-        <source src="bgm.mp3.mp3" type="audio/mpeg">
-        <source src="BGM.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- BGM Player UI -->
-    <div class="bgm-player paused" id="bgmControl" onclick="toggleBGM()">
-        <div class="flex items-end gap-1 h-6">
-            <div class="equalizer-bar h-3"></div>
-            <div class="equalizer-bar h-4"></div>
-            <div class="equalizer-bar h-6"></div>
-            <div class="equalizer-bar h-3"></div>
-        </div>
-        <div class="flex flex-col">
-            <span class="text-xs font-bold text-[#F25E00]">MapleStory BGM</span>
-            <span id="bgmStatus" class="text-[10px] text-gray-500">Playing ♪</span>
-        </div>
-    </div>
 
     <!-- Navigation -->
     <nav id="navbar" class="sticky top-0 z-50 bg-[#f7f5f0]/95 backdrop-blur-md border-b border-[#e5e0d8] py-4 px-6 transition-all duration-300">
@@ -232,7 +118,7 @@
             </div>
         </section>
 
-        <!-- 3. Skill Set Section (Chart.js) -->
+        <!-- 3. Skill Set Section -->
         <section id="skills">
             <div class="mb-6 border-l-4 border-[#F25E00] pl-4 flex justify-between items-end">
                 <div>
@@ -242,15 +128,12 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
-                <!-- Chart Area -->
                 <div class="w-full flex justify-center flex-col items-center">
                      <h3 class="text-sm font-bold text-gray-400 mb-4 tracking-widest">COMPETENCY RADAR</h3>
                     <div class="chart-container">
                         <canvas id="skillChart"></canvas>
                     </div>
                 </div>
-
-                <!-- Skill Details List -->
                 <div class="space-y-4">
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
@@ -259,7 +142,6 @@
                         </div>
                         <p class="text-sm text-gray-500">Excel(고급함수), GA4, AdsP 보유. 데이터 기반 의사결정 능숙.</p>
                     </div>
-
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Localization & Global</span>
@@ -267,7 +149,6 @@
                         </div>
                         <p class="text-sm text-gray-500">다국어 로컬라이징, 글로벌 트렌드(인도네시아,말레이시아) 센싱 및 확장.</p>
                     </div>
-
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Collaboration (QA/Dev)</span>
@@ -275,7 +156,6 @@
                         </div>
                         <p class="text-sm text-gray-500">Redmine, Confluence, Figma, Firebase 활용 개발/디자인 팀 협업 경험 다수.</p>
                     </div>
-
                     <div class="group cursor-pointer">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Performance Marketing</span>
@@ -570,58 +450,7 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // --- BGM Logic ---
-        const audio = document.getElementById('bgmAudio');
-        const bgmControl = document.getElementById('bgmControl');
-        const bgmStatus = document.getElementById('bgmStatus');
-        
-        function toggleBGM() {
-            if (audio.paused) {
-                audio.play()
-                    .then(() => {
-                        bgmControl.classList.remove('paused');
-                        bgmStatus.innerText = 'Now Playing ♪';
-                    })
-                    .catch(e => {
-                        console.log('Playback failed:', e);
-                        bgmStatus.innerText = 'Check File Path!';
-                    });
-            } else {
-                audio.pause();
-                bgmControl.classList.add('paused');
-                bgmStatus.innerText = 'Paused';
-            }
-        }
-
-        // Try Autoplay (Browsers will block this, so we use click listener as backup)
-        document.addEventListener('DOMContentLoaded', () => {
-            // Attempt autoplay
-            const playPromise = audio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    bgmControl.classList.remove('paused');
-                    bgmStatus.innerText = 'Now Playing ♪';
-                })
-                .catch(error => {
-                    // Auto-play was prevented. Show "Click to Play"
-                    console.log('Autoplay prevented. Waiting for user interaction.');
-                    bgmControl.classList.add('paused');
-                    bgmStatus.innerText = 'Click to Play ♪';
-                    
-                    // Add one-time click listener to body to start music
-                    const startMusic = () => {
-                        audio.play();
-                        bgmControl.classList.remove('paused');
-                        bgmStatus.innerText = 'Now Playing ♪';
-                        document.removeEventListener('click', startMusic);
-                    };
-                    document.addEventListener('click', startMusic);
-                });
-            }
-        });
-
-        // --- 1. Navigation Logic ---
+        // --- Navigation Logic ---
         const navItems = document.querySelectorAll('.nav-item');
         const sections = document.querySelectorAll('section');
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -648,16 +477,14 @@
             mobileMenu.classList.toggle('hidden');
         });
 
-        // --- 2. Chart.js Implementation (Competency Radar) ---
+        // --- Chart.js ---
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('skillChart').getContext('2d');
-            
-            // Data mapped from "Skills" section
             const skillData = {
-                labels: ['Data Analysis (Excel/GA4)', 'Localization', 'Marketing (Ads/Viral)', 'Tools (Notion/Figma)', 'Collaboration'],
+                labels: ['Data Analysis', 'Localization', 'Marketing', 'Tools', 'Collaboration'],
                 datasets: [{
                     label: 'Skill Proficiency',
-                    data: [95, 90, 90, 85, 95], // High proficiency based on descriptions
+                    data: [95, 90, 90, 85, 95],
                     fill: true,
                     backgroundColor: 'rgba(242, 94, 0, 0.2)', 
                     borderColor: 'rgb(242, 94, 0)',
@@ -667,7 +494,6 @@
                     pointHoverBorderColor: 'rgb(242, 94, 0)'
                 }]
             };
-
             const config = {
                 type: 'radar',
                 data: skillData,
@@ -688,92 +514,22 @@
                             ticks: { display: false }
                         }
                     },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + context.parsed.r;
-                                }
-                            }
-                        }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             };
-
             new Chart(ctx, config);
         });
 
-        // --- 3. Project Expand/Collapse Logic ---
+        // --- Project Toggle ---
         function toggleProject(element) {
             const content = element.nextElementSibling;
-            const icon = element.querySelector('.toggle-icon');
-            
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
-                icon.style.transform = 'rotate(180deg)';
                 element.parentElement.classList.add('ring-2', 'ring-[#F25E00]');
             } else {
                 content.classList.add('hidden');
-                icon.style.transform = 'rotate(0deg)';
                 element.parentElement.classList.remove('ring-2', 'ring-[#F25E00]');
             }
-        }
-
-        // --- 4. Insight Tab Logic ---
-        function setProposalTab(tabName) {
-            const btnDesign = document.getElementById('btn-design');
-            const btnTech = document.getElementById('btn-tech');
-            const contentDesign = document.getElementById('content-design');
-            const contentTech = document.getElementById('content-tech');
-
-            if (tabName === 'design') {
-                btnDesign.classList.remove('bg-white', 'text-gray-500', 'border');
-                btnDesign.classList.add('bg-[#F25E00]', 'text-white', 'shadow-md');
-                btnTech.classList.add('bg-white', 'text-gray-500', 'border');
-                btnTech.classList.remove('bg-[#F25E00]', 'text-white', 'shadow-md');
-                contentDesign.classList.remove('hidden');
-                contentTech.classList.add('hidden');
-            } else {
-                btnTech.classList.remove('bg-white', 'text-gray-500', 'border');
-                btnTech.classList.add('bg-[#F25E00]', 'text-white', 'shadow-md');
-                btnDesign.classList.add('bg-white', 'text-gray-500', 'border');
-                btnDesign.classList.remove('bg-[#F25E00]', 'text-white', 'shadow-md');
-                contentTech.classList.remove('hidden');
-                contentDesign.classList.add('hidden');
-            }
-        }
-
-        // --- 5. Leadership Tab Logic ---
-        function setLeadershipTab(tabName, event) {
-            if(event) event.stopPropagation();
-
-            const buttons = ['tab-event', 'tab-analysis', 'tab-booth'];
-            const contents = ['leadership-event', 'leadership-analysis', 'leadership-booth'];
-            
-            const selectedBtnId = 'tab-' + tabName;
-            const selectedContentId = 'leadership-' + tabName;
-
-            buttons.forEach(btnId => {
-                const btn = document.getElementById(btnId);
-                if (btnId === selectedBtnId) {
-                    btn.classList.remove('bg-gray-100', 'text-gray-500');
-                    btn.classList.add('bg-[#F25E00]', 'text-white', 'shadow-md');
-                } else {
-                    btn.classList.add('bg-gray-100', 'text-gray-500');
-                    btn.classList.remove('bg-[#F25E00]', 'text-white', 'shadow-md');
-                }
-            });
-
-            contents.forEach(contentId => {
-                const content = document.getElementById(contentId);
-                if (contentId === selectedContentId) {
-                    content.classList.remove('hidden');
-                } else {
-                    content.classList.add('hidden');
-                }
-            });
         }
     </script>
 </body>
