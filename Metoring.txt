@@ -124,7 +124,7 @@
                 
                 <!-- [중요] src를 본인 이미지 파일명으로 변경하세요 -->
                 <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-full flex items-center justify-center border-4 border-[#F25E00] shrink-0 shadow-lg relative overflow-hidden">
-                    <img src="https://ui-avatars.com/api/?name=Jang+Doeun&background=F25E00&color=fff&size=200" alt="Character Avatar" class="w-full h-full object-cover">
+                    <img src="matoring.png" class="w-full h-full object-cover">
                     <div class="absolute bottom-0 right-0 bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white z-10">LV. Max</div>
                 </div>
 
