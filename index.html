@@ -75,11 +75,6 @@
 <body class="overflow-x-hidden">
 
     <!-- BGM Audio Element -->
-    <!-- 
-      [수정됨] id는 "bgmAudio"로 고정해야 작동합니다. 
-      음악 파일 이름은 src="" 안에 적어주세요. 
-      예: src="메이플스토리-로그인.mp3" 
-    -->
     <audio id="bgmAudio" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
@@ -126,9 +121,13 @@
             <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-[#F25E00]/10 rounded-bl-full -mr-8 -mt-8"></div>
                 
-                <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-full flex items-center justify-center border-4 border-[#F25E00] shrink-0 shadow-lg relative overflow-hidden">
-                    <img src="matoring.png" alt="Character Avatar" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 right-0 bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white z-10">LV. Max</div>
+                <!-- 구조 수정: overflow-hidden을 내부 div로 이동하고 레벨 배지를 밖으로 뺌 -->
+                <div class="relative w-32 h-32 md:w-40 md:h-40 shrink-0">
+                    <div class="w-full h-full rounded-full border-4 border-[#F25E00] shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                        <img src="matoring.png" alt="Character Avatar" class="w-full h-full object-cover">
+                    </div>
+                    <!-- 레벨 배지 위치 조정 -->
+                    <div class="absolute bottom-1 right-1 bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white z-20 shadow-md">LV. 24</div>
                 </div>
 
                 <div class="flex-1 text-center md:text-left z-10">
