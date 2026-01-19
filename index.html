@@ -32,6 +32,49 @@
             }
         }
 
+        /* Intro Overlay Styles */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            backdrop-filter: blur(5px);
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .start-btn {
+            background: #F25E00;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            border: 4px solid white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(242, 94, 0, 0.6);
+            transition: all 0.3s;
+            animation: pulse 2s infinite;
+        }
+        
+        .start-btn:hover {
+            transform: scale(1.1);
+            background: #ff7f2a;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(242, 94, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(242, 94, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(242, 94, 0, 0); }
+        }
+
         /* BGM Player Styles */
         .bgm-player {
             position: fixed;
@@ -48,6 +91,7 @@
             z-index: 100;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
+            cursor: pointer;
         }
         .bgm-player:hover { transform: scale(1.05); }
         .equalizer-bar {
@@ -74,8 +118,17 @@
 </head>
 <body class="overflow-x-hidden">
 
+    <!-- Intro Overlay (Click to Start) -->
+    <div id="intro-overlay">
+        <div class="text-center animate-fade-in-up">
+            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tighter">MAPLE<span class="text-[#F25E00]">CAREER</span></h1>
+            <p class="text-gray-300 mb-10 text-lg">장도은 포트폴리오 월드에 입장하시겠습니까?</p>
+            <button onclick="startGame()" class="start-btn">GAME START</button>
+        </div>
+    </div>
+
     <!-- BGM Audio Element -->
-    <!-- [수정됨] 파일 이름이 bgm.mp3 또는 bgm.mp3.mp3 일 경우 모두 재생 시도 -->
+    <!-- 파일명: bgm.mp3 또는 bgm.mp3.mp3 모두 시도 -->
     <audio id="bgmAudio" loop>
         <source src="bgm.mp3" type="audio/mpeg">
         <source src="bgm.mp3.mp3" type="audio/mpeg">
@@ -83,7 +136,7 @@
     </audio>
 
     <!-- BGM Player UI -->
-    <div class="bgm-player paused cursor-pointer" id="bgmControl" onclick="toggleBGM()">
+    <div class="bgm-player paused" id="bgmControl" onclick="toggleBGM()">
         <div class="flex items-end gap-1 h-6">
             <div class="equalizer-bar h-3"></div>
             <div class="equalizer-bar h-4"></div>
@@ -92,7 +145,7 @@
         </div>
         <div class="flex flex-col">
             <span class="text-xs font-bold text-[#F25E00]">MapleStory BGM</span>
-            <span id="bgmStatus" class="text-[10px] text-gray-500">Click to Play ♪</span>
+            <span id="bgmStatus" class="text-[10px] text-gray-500">Playing ♪</span>
         </div>
     </div>
 
@@ -124,13 +177,10 @@
             <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-[#F25E00]/10 rounded-bl-full -mr-8 -mt-8"></div>
                 
-                <!-- 구조 수정: overflow-hidden을 내부 div로 이동하고 레벨 배지를 밖으로 뺌 -->
                 <div class="relative w-32 h-32 md:w-40 md:h-40 shrink-0">
-                    <!-- 이미지는 이 안에서만 잘림 -->
                     <div class="w-full h-full rounded-full border-4 border-[#F25E00] shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                         <img src="matoring.png" alt="Character Avatar" class="w-full h-full object-cover">
                     </div>
-                    <!-- 배지는 밖으로 꺼내서 겹치게 배치 -->
                     <div class="absolute bottom-1 right-1 bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white z-20 shadow-md">LV. 24</div>
                 </div>
 
@@ -533,6 +583,7 @@
                         bgmStatus.innerText = 'Now Playing ♪';
                     })
                     .catch(e => {
+                        console.log('Playback failed:', e);
                         bgmStatus.innerText = 'Check File Path!';
                     });
             } else {
@@ -542,16 +593,23 @@
             }
         }
 
+        // Try Autoplay (Browsers will block this, so we use click listener as backup)
         document.addEventListener('DOMContentLoaded', () => {
+            // Attempt autoplay
             const playPromise = audio.play();
+            
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
                     bgmControl.classList.remove('paused');
                     bgmStatus.innerText = 'Now Playing ♪';
                 })
                 .catch(error => {
+                    // Auto-play was prevented. Show "Click to Play"
+                    console.log('Autoplay prevented. Waiting for user interaction.');
                     bgmControl.classList.add('paused');
                     bgmStatus.innerText = 'Click to Play ♪';
+                    
+                    // Add one-time click listener to body to start music
                     const startMusic = () => {
                         audio.play();
                         bgmControl.classList.remove('paused');
@@ -563,7 +621,7 @@
             }
         });
 
-        // --- Navigation Logic ---
+        // --- 1. Navigation Logic ---
         const navItems = document.querySelectorAll('.nav-item');
         const sections = document.querySelectorAll('section');
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -577,6 +635,7 @@
                     current = section.getAttribute('id');
                 }
             });
+
             navItems.forEach(item => {
                 item.classList.remove('active');
                 if (item.getAttribute('href').includes(current)) {
@@ -589,14 +648,16 @@
             mobileMenu.classList.toggle('hidden');
         });
 
-        // --- Chart.js ---
+        // --- 2. Chart.js Implementation (Competency Radar) ---
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('skillChart').getContext('2d');
+            
+            // Data mapped from "Skills" section
             const skillData = {
-                labels: ['Data Analysis', 'Localization', 'Marketing', 'Tools', 'Collaboration'],
+                labels: ['Data Analysis (Excel/GA4)', 'Localization', 'Marketing (Ads/Viral)', 'Tools (Notion/Figma)', 'Collaboration'],
                 datasets: [{
                     label: 'Skill Proficiency',
-                    data: [95, 90, 90, 85, 95],
+                    data: [95, 90, 90, 85, 95], // High proficiency based on descriptions
                     fill: true,
                     backgroundColor: 'rgba(242, 94, 0, 0.2)', 
                     borderColor: 'rgb(242, 94, 0)',
@@ -606,6 +667,7 @@
                     pointHoverBorderColor: 'rgb(242, 94, 0)'
                 }]
             };
+
             const config = {
                 type: 'radar',
                 data: skillData,
@@ -626,22 +688,92 @@
                             ticks: { display: false }
                         }
                     },
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.r;
+                                }
+                            }
+                        }
+                    }
                 }
             };
+
             new Chart(ctx, config);
         });
 
-        // --- Project Toggle ---
+        // --- 3. Project Expand/Collapse Logic ---
         function toggleProject(element) {
             const content = element.nextElementSibling;
+            const icon = element.querySelector('.toggle-icon');
+            
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
                 element.parentElement.classList.add('ring-2', 'ring-[#F25E00]');
             } else {
                 content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
                 element.parentElement.classList.remove('ring-2', 'ring-[#F25E00]');
             }
+        }
+
+        // --- 4. Insight Tab Logic ---
+        function setProposalTab(tabName) {
+            const btnDesign = document.getElementById('btn-design');
+            const btnTech = document.getElementById('btn-tech');
+            const contentDesign = document.getElementById('content-design');
+            const contentTech = document.getElementById('content-tech');
+
+            if (tabName === 'design') {
+                btnDesign.classList.remove('bg-white', 'text-gray-500', 'border');
+                btnDesign.classList.add('bg-[#F25E00]', 'text-white', 'shadow-md');
+                btnTech.classList.add('bg-white', 'text-gray-500', 'border');
+                btnTech.classList.remove('bg-[#F25E00]', 'text-white', 'shadow-md');
+                contentDesign.classList.remove('hidden');
+                contentTech.classList.add('hidden');
+            } else {
+                btnTech.classList.remove('bg-white', 'text-gray-500', 'border');
+                btnTech.classList.add('bg-[#F25E00]', 'text-white', 'shadow-md');
+                btnDesign.classList.add('bg-white', 'text-gray-500', 'border');
+                btnDesign.classList.remove('bg-[#F25E00]', 'text-white', 'shadow-md');
+                contentTech.classList.remove('hidden');
+                contentDesign.classList.add('hidden');
+            }
+        }
+
+        // --- 5. Leadership Tab Logic ---
+        function setLeadershipTab(tabName, event) {
+            if(event) event.stopPropagation();
+
+            const buttons = ['tab-event', 'tab-analysis', 'tab-booth'];
+            const contents = ['leadership-event', 'leadership-analysis', 'leadership-booth'];
+            
+            const selectedBtnId = 'tab-' + tabName;
+            const selectedContentId = 'leadership-' + tabName;
+
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btnId === selectedBtnId) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-500');
+                    btn.classList.add('bg-[#F25E00]', 'text-white', 'shadow-md');
+                } else {
+                    btn.classList.add('bg-gray-100', 'text-gray-500');
+                    btn.classList.remove('bg-[#F25E00]', 'text-white', 'shadow-md');
+                }
+            });
+
+            contents.forEach(contentId => {
+                const content = document.getElementById(contentId);
+                if (contentId === selectedContentId) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
         }
     </script>
 </body>
