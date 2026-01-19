@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메이플 대학생 커리어 캠프 지원 포트폴리오 - 장도은</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f7f5f0; color: #4a4a4a; }
+        .maple-shadow { box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
+        .maple-card { background: #fff; border: 2px solid #e5e0d8; border-radius: 12px; transition: all 0.3s ease; }
+        .maple-card:hover { border-color: #F25E00; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(242, 94, 0, 0.1); }
+        .accent-text { color: #F25E00; }
+        .bg-accent { background-color: #F25E00; }
+        .nav-item.active { border-bottom: 3px solid #F25E00; color: #F25E00; font-weight: bold; }
+        
+        /* Chart Container Styles */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* BGM Player Styles */
+        .bgm-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #F25E00;
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .bgm-player:hover { transform: scale(1.05); }
+        .equalizer-bar {
+            background-color: #F25E00;
+            width: 4px;
+            border-radius: 2px;
+            animation: bounce 1s infinite ease-in-out;
+        }
+        .equalizer-bar:nth-child(2) { animation-delay: 0.1s; height: 12px; }
+        .equalizer-bar:nth-child(3) { animation-delay: 0.2s; height: 16px; }
+        .equalizer-bar:nth-child(4) { animation-delay: 0.3s; height: 10px; }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+        
+        .paused .equalizer-bar {
+            animation-play-state: paused;
+            height: 4px !important;
+            transform: scaleY(1);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- BGM Audio Element -->
+    <!-- [중요] bgm.mp3 파일을 같은 폴더에 넣어주세요 -->
+    <audio id="bgmAudio" loop>
+        <source src="bgm.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- BGM Player UI -->
+    <div class="bgm-player paused cursor-pointer" id="bgmControl" onclick="toggleBGM()">
+        <div class="flex items-end gap-1 h-6">
+            <div class="equalizer-bar h-3"></div>
+            <div class="equalizer-bar h-4"></div>
+            <div class="equalizer-bar h-6"></div>
+            <div class="equalizer-bar h-3"></div>
+        </div>
+        <div class="flex flex-col">
+            <span class="text-xs font-bold text-[#F25E00]">MapleStory BGM</span>
+            <span id="bgmStatus" class="text-[10px] text-gray-500">Click to Play ♪</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="sticky top-0 z-50 bg-[#f7f5f0]/95 backdrop-blur-md border-b border-[#e5e0d8] py-4 px-6 transition-all duration-300">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="font-black text-xl tracking-tighter text-gray-800">MAPLE<span class="text-[#F25E00]">CAREER</span></div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-500">
+                <a href="#profile" class="nav-item hover:text-[#F25E00] transition-colors">프로필</a>
+                <a href="#identity" class="nav-item hover:text-[#F25E00] transition-colors">용사 정보</a>
+                <a href="#skills" class="nav-item hover:text-[#F25E00] transition-colors">보유 스킬</a>
+                <a href="#projects" class="nav-item hover:text-[#F25E00] transition-colors">퀘스트 로그</a>
+                <a href="#vision" class="nav-item hover:text-[#F25E00] transition-colors">포부</a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden text-2xl">≡</button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-lg flex flex-col p-4 space-y-3">
+             <a href="#profile" class="mobile-nav-item block p-2">프로필</a>
+             <a href="#projects" class="mobile-nav-item block p-2">퀘스트 로그</a>
+             <a href="#vision" class="mobile-nav-item block p-2">포부</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-24">
+
+        <!-- 1. Profile Section -->
+        <section id="profile" class="animate-fade-in">
+            <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-[#F25E00]/10 rounded-bl-full -mr-8 -mt-8"></div>
+                
+                <!-- [중요] src를 본인 이미지 파일명으로 변경하세요 -->
+                <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-full flex items-center justify-center border-4 border-[#F25E00] shrink-0 shadow-lg relative overflow-hidden">
+                    <img src="https://ui-avatars.com/api/?name=Jang+Doeun&background=F25E00&color=fff&size=200" alt="Character Avatar" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 right-0 bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white z-10">LV. Max</div>
+                </div>
+
+                <div class="flex-1 text-center md:text-left z-10">
+                    <div class="inline-block bg-orange-100 text-[#F25E00] text-xs font-bold px-3 py-1 rounded-full mb-2">서비스 운영 & 마케팅 전문가</div>
+                    <h1 class="text-3xl md:text-4xl font-black text-gray-800 mb-2">장도은 <span class="text-lg font-normal text-gray-500 ml-2">Applicant</span></h1>
+                    <p class="text-xl text-gray-600 mb-6 italic">"데이터로 효율을 3배 높이고, 트렌드로 1,600만 뷰를 만드는 용사"</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
+                        <div class="flex items-center gap-2 justify-center md:justify-start">
+                            <span>🎓</span> <span>한국외국어대학교 (졸업예정)</span>
+                        </div>
+                        <div class="flex items-center gap-2 justify-center md:justify-start">
+                            <span>💼</span> <span>NCAI 운영팀 (3개월) / 네이버제트 스티컬리 (재직중)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Maple Identity Section -->
+        <section id="identity">
+            <div class="mb-6 border-l-4 border-[#F25E00] pl-4">
+                <h2 class="text-2xl font-bold text-gray-800">🍁 용사님 스탯 (Career Stats)</h2>
+                <p class="text-sm text-gray-500 mt-1">실무 경험을 통해 증명된 핵심 능력치입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="maple-card p-6 text-center">
+                    <div class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Efficiency</div>
+                    <div class="text-2xl font-black text-[#F25E00]">300%</div>
+                    <div class="text-xs text-gray-500 mt-1">업무 효율 개선</div>
+                </div>
+                 <div class="maple-card p-6 text-center">
+                    <div class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Max Views</div>
+                    <div class="text-2xl font-black text-gray-800">2,500만</div>
+                    <div class="text-xs text-gray-500 mt-1">틱톡 바이럴 성과</div>
+                </div>
+                 <div class="maple-card p-6 text-center">
+                    <div class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Optimization</div>
+                    <div class="text-xl font-bold text-gray-800">40,000건+</div>
+                    <div class="text-xs text-gray-500 mt-1">불필요 검수 절감</div>
+                </div>
+                 <div class="maple-card p-6 text-center">
+                    <div class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Achievement</div>
+                    <div class="text-sm font-bold text-gray-800 line-clamp-2">틱톡 팔로워 3만명 증가<br></div>
+                    <div class="mt-2">🏆</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Skill Set Section -->
+        <section id="skills">
+            <div class="mb-6 border-l-4 border-[#F25E00] pl-4 flex justify-between items-end">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">🛠️ 보유 스킬 (HEXA Matrix)</h2>
+                    <p class="text-sm text-gray-500 mt-1">데이터 분석부터 협업 툴까지, 준비된 실무 역량</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+                <div class="w-full flex justify-center flex-col items-center">
+                     <h3 class="text-sm font-bold text-gray-400 mb-4 tracking-widest">COMPETENCY RADAR</h3>
+                    <div class="chart-container">
+                        <canvas id="skillChart"></canvas>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="group cursor-pointer">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Data & Tools</span>
+                            <span class="text-xs font-bold bg-[#F25E00] text-white px-2 py-0.5 rounded">Master</span>
+                        </div>
+                        <p class="text-sm text-gray-500">Excel(고급함수), GA4, AdsP 보유. 데이터 기반 의사결정 능숙.</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Localization & Global</span>
+                            <span class="text-xs font-bold bg-gray-600 text-white px-2 py-0.5 rounded">High</span>
+                        </div>
+                        <p class="text-sm text-gray-500">다국어 로컬라이징, 글로벌 트렌드(인도네시아,말레이시아) 센싱 및 확장.</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Collaboration (QA/Dev)</span>
+                            <span class="text-xs font-bold bg-gray-600 text-white px-2 py-0.5 rounded">High</span>
+                        </div>
+                        <p class="text-sm text-gray-500">Redmine, Confluence, Figma, Firebase 활용 개발/디자인 팀 협업 경험 다수.</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-gray-700 group-hover:text-[#F25E00] transition">Performance Marketing</span>
+                            <span class="text-xs font-bold bg-[#F25E00] text-white px-2 py-0.5 rounded">High</span>
+                        </div>
+                        <p class="text-sm text-gray-500">틱톡/메타 광고 최적화, CTR/푸시광고 오픈율 개선 성과 보유.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Projects Section (Quest Log) -->
+        <section id="projects">
+            <div class="mb-6 border-l-4 border-[#F25E00] pl-4">
+                <h2 class="text-2xl font-bold text-gray-800">💻 퀘스트 로그 (Quest Log)</h2>
+                <p class="text-sm text-gray-500 mt-1">글로벌 경험부터 실무까지, 시간 순서대로 정리된 성장 기록입니다.</p>
+            </div>
+
+            <!-- Quest 1: Indonesia Booth -->
+            <div class="maple-card mb-6 overflow-hidden project-card group">
+                <div class="bg-gray-50 p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onclick="toggleProject(this)">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="bg-indigo-500 text-white text-xs font-bold px-2 py-1 rounded">Culture Exchange</span>
+                            <span class="text-gray-500 text-sm font-medium">인도네시아 교환학생 | <span class="text-gray-400">2023.02.15 ~ 2023.12.25</span></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#F25E00] transition-colors">QUEST 01: 국제 축제 한국 부스 운영 1위</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="text-gray-400 group-hover:text-[#F25E00] transition font-bold text-sm flex items-center gap-1">상세 공략 ▼</button>
+                    </div>
+                </div>
+                <div class="hidden content-body bg-white p-6 animate-fade-in-down">
+                    <div class="mb-4 text-sm text-gray-600 bg-orange-50 p-3 rounded border border-orange-100">
+                        <p><strong>💡 역할:</strong> 부스 메뉴 기획, 현지 시장 조사, 판매 및 운영</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="text-red-600 font-bold mb-2 text-sm">🔥 CHALLENGE</h4>
+                            <p class="text-sm text-gray-700">치열한 국제 축제 경쟁 속에서 현지인(인도네시아) 입맛 공략 필요.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="text-blue-600 font-bold mb-2 text-sm">💧 STRATEGY</h4>
+                            <p class="text-sm text-gray-700">현지 식당 60곳 조사 및 설문조사 수행. '달콤+튀김' 선호 파악하여 '라면땅/떡꼬치' 메뉴화.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="text-green-600 font-bold mb-2 text-sm">🍀 RESULT</h4>
+                            <p class="text-sm text-gray-700">부스 매출 전체 1위 달성, 준비 물량 조기 완판 기록.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest 2: MiL.k Partners -->
+            <div class="maple-card mb-6 overflow-hidden project-card group">
+                <div class="bg-gray-50 p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onclick="toggleProject(this)">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="bg-indigo-500 text-white text-xs font-bold px-2 py-1 rounded">Global Supporters</span>
+                            <span class="text-gray-500 text-sm font-medium">밀크파트너스 서포터즈 | <span class="text-gray-400">2023.08.24 ~ 2023.10.08 </span></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#F25E00] transition-colors">QUEST 02: 글로벌 팀(한-인니) 협업 SNS 마케팅</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="text-gray-400 group-hover:text-[#F25E00] transition font-bold text-sm flex items-center gap-1">상세 공략 ▼</button>
+                    </div>
+                </div>
+                <div class="hidden content-body bg-white p-6 animate-fade-in-down">
+                    <div class="mb-4 text-sm text-gray-600 bg-orange-50 p-3 rounded border border-orange-100">
+                        <p><strong>💡 역할:</strong> 팀 내 소통 통역(영어/인니어), 콘텐츠(릴스/카드뉴스) 기획 및 제작</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="text-red-600 font-bold mb-2 text-sm">🔥 CHALLENGE (소통 한계)</h4>
+                            <p class="text-sm text-gray-700">다국적 팀(한국2, 인니2)의 비대면 협업 및 언어 장벽 존재.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="text-blue-600 font-bold mb-2 text-sm">💧 SOLUTION (ZEP 활용)</h4>
+                            <p class="text-sm text-gray-700">ZEP 가상 회의실 운영, 매주 줌 회의 및 현지 피드백 반영한 맞춤형 콘텐츠 제작.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="text-green-600 font-bold mb-2 text-sm">🍀 RESULT (전체 1위)</h4>
+                            <p class="text-sm text-gray-700">팔로워 1,000명 달성 및 서포터즈 전체 1위 성과 기록.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest 3: Dept TA -->
+            <div class="maple-card mb-6 overflow-hidden project-card group">
+                <div class="bg-gray-50 p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onclick="toggleProject(this)">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded">Academic Admin</span>
+                            <span class="text-gray-500 text-sm font-medium">학과 조교 | <span class="text-gray-400">2024.06.14 ~ 2025.01.20</span></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#F25E00] transition-colors">QUEST 03: 학과 행정 및 커뮤니케이션 관리</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="text-gray-400 group-hover:text-[#F25E00] transition font-bold text-sm flex items-center gap-1">상세 공략 ▼</button>
+                    </div>
+                </div>
+                <div class="hidden content-body bg-white p-6 animate-fade-in-down">
+                    <div class="mb-4 text-sm text-gray-600 bg-orange-50 p-3 rounded border border-orange-100">
+                        <p><strong>💡 역할:</strong> 학생 지원, 학사 행정, 교과 관리, 교수 보조, 학과 단톡방·홈페이지 관리</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="text-red-600 font-bold mb-2 text-sm">🔥 CHALLENGE (문의 폭주)</h4>
+                            <p class="text-sm text-gray-700">다양한 학사 정보에 대한 학생들의 문의 폭주 및 행정 처리 효율화 필요.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="text-blue-600 font-bold mb-2 text-sm">💧 STRATEGY (체계화)</h4>
+                            <p class="text-sm text-gray-700">단톡방/홈페이지를 통한 학사 일정 사전 공지 및 구글폼을 통한 의견 조율.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="text-green-600 font-bold mb-2 text-sm">🍀 RESULT (운영 최적화)</h4>
+                            <p class="text-sm text-gray-700">원활한 학사 운영 지원, 학생 정보 접근성 향상 및 교수-학생 간 가교 역할.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest 4: Mobility Project -->
+            <div class="maple-card mb-6 overflow-hidden project-card group">
+                <div class="bg-gray-50 p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onclick="toggleProject(this)">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded">Content Planning</span>
+                            <span class="text-gray-500 text-sm font-medium">모빌리티 실무 프로젝트 | <span class="text-gray-400">2024.03.30 ~ 2024.07.19 </span></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#F25E00] transition-colors">QUEST 04: MZ세대 타겟 영상 콘텐츠 기획</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="text-gray-400 group-hover:text-[#F25E00] transition font-bold text-sm flex items-center gap-1">상세 공략 ▼</button>
+                    </div>
+                </div>
+                <div class="hidden content-body bg-white p-6 animate-fade-in-down">
+                    <div class="mb-4 text-sm text-gray-600 bg-orange-50 p-3 rounded border border-orange-100">
+                        <p><strong>💡 역할:</strong> 영상 콘텐츠 기획, 연출 및 출연, 트렌드 분석</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="text-red-600 font-bold mb-2 text-sm">🔥 CHALLENGE (앱 활성화)</h4>
+                            <p class="text-sm text-gray-700">MZ세대의 모빌리티 앱 사용 유도 및 흥미 유발 콘텐츠 부재.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="text-blue-600 font-bold mb-2 text-sm">💧 SOLUTION (트렌드 응용)</h4>
+                            <p class="text-sm text-gray-700">유튜브 '패션 소개팅' 형식 패러디, 장소/동선 기반 매칭 이벤트 영상 기획.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="text-green-600 font-bold mb-2 text-sm">🍀 RESULT (우수상)</h4>
+                            <p class="text-sm text-gray-700">실무진의 마케팅 활용 가능성 인정 및 우수상 수상.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest 5: Trade Club -->
+            <div class="maple-card mb-6 overflow-hidden project-card group">
+                <div class="bg-gray-50 p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onclick="toggleProject(this)">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="bg-gray-700 text-white text-xs font-bold px-2 py-1 rounded">Trade Strategy</span>
+                            <span class="text-gray-500 text-sm font-medium">무역학회 팀장 | <span class="text-gray-400">2024.07.15 ~ 2024.12.11</span></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#F25E00] transition-colors">QUEST 05: 플랫폼 서비스 무역(김과외) 진출 전략</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="text-gray-400 group-hover:text-[#F25E00] transition font-bold text-sm flex items-center gap-1">상세 공략 ▼</button>
+                    </div>
+                </div>
+                <div class="hidden content-body bg-white p-6 animate-fade-in-down">
+                    <div class="mb-4 text-sm text-gray-600 bg-orange-50 p-3 rounded border border-orange-100">
+                        <p><strong>💡 역할:</strong> 인도네시아 진출 보고서 작성, GATS/법령 분석, 벤치마킹 전략 수립</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="text-red-600 font-bold mb-2 text-sm">🔥 CHALLENGE (법적 장벽)</h4>
+                            <p class="text-sm text-gray-700">상품 무역과 다른 플랫폼 서비스의 GATS 협정, PSE 등록, PDP법 등 복잡한 규제.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="text-blue-600 font-bold mb-2 text-sm">💧 SOLUTION (벤치마킹)</h4>
+                            <p class="text-sm text-gray-700">AWS의 법령 준수 사례 벤치마킹, 글로벌 플랫폼 사례 조사로 추상적 요소 구체화.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="text-green-600 font-bold mb-2 text-sm">🍀 REWARD (우수 사례)</h4>
+                            <p class="text-sm text-gray-700">법령·리스크·BM을 아우른 현실적 전략으로 학회 우수 사례 선정.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest 6: NCAI -->
+            <div class="maple-card mb-6 overflow-hidden project-card group">
+                <div class="bg-gray-50 p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onclick="toggleProject(this)">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded">NCAI (엔씨소프트)</span>
+                            <span class="text-gray-500 text-sm font-medium">서비스운영팀 | <span class="text-gray-400">2025.07.14 ~ 2025.10.10</span></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#F25E00] transition-colors">QUEST 06: 로컬라이징 자동화 및 운영 효율화</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="text-gray-400 group-hover:text-[#F25E00] transition font-bold text-sm flex items-center gap-1">상세 공략 ▼</button>
+                    </div>
+                </div>
+                <div class="hidden content-body bg-white p-6 animate-fade-in-down">
+                     <div class="mb-4 text-sm text-gray-600 bg-orange-50 p-3 rounded border border-orange-100">
+                        <p><strong>💡 역할:</strong> 게임 채팅 로그 분석, 게임 도메인 별 용어사전 및 데이터 구축, AI 번역 평가 및 검수, AI 번역 서비스 이슈 대응 및 테스트</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="text-red-600 font-bold mb-2 text-sm">🔥 PROBLEM</h4>
+                            <p class="text-sm text-gray-700">7.5만 개 용어 데이터 관리 비효율 및 게시판 마스킹 오류 발생.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="text-blue-600 font-bold mb-2 text-sm">💧 SOLUTION</h4>
+                            <p class="text-sm text-gray-700">엑셀 자동화 도입, 스크립트 구조 개선 제안, Redmine 기록 체계화.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="text-green-600 font-bold mb-2 text-sm">🍀 REWARD</h4>
+                            <p class="text-sm text-gray-700">업무 소요 3개월 → 1개월 단축(효율 300%), 불필요 검수 4만 건 절감.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest 7: Naver Z -->
+            <div class="maple-card mb-6 overflow-hidden project-card group">
+                <div class="bg-gray-50 p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onclick="toggleProject(this)">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="bg-[#F25E00] text-white text-xs font-bold px-2 py-1 rounded">NAVER Z</span>
+                            <span class="text-gray-500 text-sm font-medium">스티컬리 마케팅 | <span class="text-gray-400 font-bold text-[#F25E00]">2025.10.13 ~ 재직중</span></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#F25E00] transition-colors">QUEST 07: 인도네시아 바이럴 마케팅</h3>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button class="text-gray-400 group-hover:text-[#F25E00] transition font-bold text-sm flex items-center gap-1">상세 공략 ▼</button>
+                    </div>
+                </div>
+                <div class="hidden content-body bg-white p-6 animate-fade-in-down">
+                     <div class="mb-4 text-sm text-gray-600 bg-orange-50 p-3 rounded border border-orange-100">
+                        <p><strong>💡 역할:</strong> 인도네시아 사용자 대상 스티컬리 플랫폼 내 콘텐츠 운영.관리, 프로덕트 로컬라이제이션 및 프로덕트 마케팅 지원, CS 대응 및 유저 커뮤니케이션 보조</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="text-red-600 font-bold mb-2 text-sm">🔥 CHALLENGE</h4>
+                            <p class="text-sm text-gray-700">글로벌 신규 유저 확보 및 앱 활성화 미션 (인도네시아/말레이시아 타겟).</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="text-blue-600 font-bold mb-2 text-sm">💧 SOLUTION</h4>
+                            <p class="text-sm text-gray-700">현지 밈 선제 포착 및 '숏컷 전략' 제안, 틱톡/메타 광고 단가 최적화.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h4 class="text-green-600 font-bold mb-2 text-sm">🍀 REWARD</h4>
+                            <p class="text-sm text-gray-700">조회수 2,500만(글로벌 1위), 푸시광고 클릭 수 1.5배, 팔로워 3만 증대.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 6. Vision Section -->
+        <section id="vision" class="pb-20">
+            <div class="mb-6 border-l-4 border-[#F25E00] pl-4">
+                <h2 class="text-2xl font-bold text-gray-800">🚀 포부 (Goal)</h2>
+                <p class="text-sm text-gray-500 mt-1">메이플 월드를 향한 여정의 다음 단계입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+                <div class="bg-white p-8 rounded-xl shadow-sm border-t-4 border-[#F25E00] text-center">
+                    <div class="text-5xl mb-4">🍁</div>
+                    <h3 class="font-bold text-2xl text-gray-800 mb-4">"세계적인 메이플스토리를 위하여"</h3>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                        주황버섯에 대한 애정으로 시작해, 이제는 메이플스토리가 라부부 이상의 글로벌 IP로 성장하는 데 기여하고 싶습니다. <br>
+                        <strong>데이터 기반의 효율화 역량</strong>과 <strong>글로벌 마케팅 감각</strong>을 더해, 넥슨의 심장인 메이플스토리가 전 세계 용사들에게 사랑받는 문화 플랫폼이 되도록 이바지하겠습니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-8 text-center text-sm border-t border-gray-700">
+        <p class="mb-2">MapleStory Career Camp Portfolio</p>
+        <p>&copy; 2026 Applicant. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- BGM Logic ---
+        const audio = document.getElementById('bgmAudio');
+        const bgmControl = document.getElementById('bgmControl');
+        const bgmStatus = document.getElementById('bgmStatus');
+        
+        function toggleBGM() {
+            if (audio.paused) {
+                audio.play()
+                    .then(() => {
+                        bgmControl.classList.remove('paused');
+                        bgmStatus.innerText = 'Now Playing ♪';
+                    })
+                    .catch(e => {
+                        bgmStatus.innerText = 'Check File Path!';
+                    });
+            } else {
+                audio.pause();
+                bgmControl.classList.add('paused');
+                bgmStatus.innerText = 'Paused';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    bgmControl.classList.remove('paused');
+                    bgmStatus.innerText = 'Now Playing ♪';
+                })
+                .catch(error => {
+                    bgmControl.classList.add('paused');
+                    bgmStatus.innerText = 'Click to Play ♪';
+                    const startMusic = () => {
+                        audio.play();
+                        bgmControl.classList.remove('paused');
+                        bgmStatus.innerText = 'Now Playing ♪';
+                        document.removeEventListener('click', startMusic);
+                    };
+                    document.addEventListener('click', startMusic);
+                });
+            }
+        });
+
+        // --- Navigation Logic ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('section');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= (sectionTop - 250)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href').includes(current)) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- Chart.js ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('skillChart').getContext('2d');
+            const skillData = {
+                labels: ['Data Analysis', 'Localization', 'Marketing', 'Tools', 'Collaboration'],
+                datasets: [{
+                    label: 'Skill Proficiency',
+                    data: [95, 90, 90, 85, 95],
+                    fill: true,
+                    backgroundColor: 'rgba(242, 94, 0, 0.2)', 
+                    borderColor: 'rgb(242, 94, 0)',
+                    pointBackgroundColor: 'rgb(242, 94, 0)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(242, 94, 0)'
+                }]
+            };
+            const config = {
+                type: 'radar',
+                data: skillData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: { line: { borderWidth: 3 } },
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e5e0d8' },
+                            grid: { color: '#e5e0d8' },
+                            pointLabels: {
+                                font: { size: 11, family: "'Noto Sans KR', sans-serif", weight: 'bold' },
+                                color: '#4a4a4a'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            };
+            new Chart(ctx, config);
+        });
+
+        // --- Project Toggle ---
+        function toggleProject(element) {
+            const content = element.nextElementSibling;
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                element.parentElement.classList.add('ring-2', 'ring-[#F25E00]');
+            } else {
+                content.classList.add('hidden');
+                element.parentElement.classList.remove('ring-2', 'ring-[#F25E00]');
+            }
+        }
+    </script>
+</body>
+</html>
+
