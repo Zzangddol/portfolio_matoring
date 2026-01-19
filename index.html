@@ -75,8 +75,11 @@
 <body class="overflow-x-hidden">
 
     <!-- BGM Audio Element -->
+    <!-- [수정됨] 파일 이름이 bgm.mp3 또는 bgm.mp3.mp3 일 경우 모두 재생 시도 -->
     <audio id="bgmAudio" loop>
         <source src="bgm.mp3" type="audio/mpeg">
+        <source src="bgm.mp3.mp3" type="audio/mpeg">
+        <source src="BGM.mp3" type="audio/mpeg">
     </audio>
 
     <!-- BGM Player UI -->
@@ -121,7 +124,7 @@
             <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-[#F25E00]/10 rounded-bl-full -mr-8 -mt-8"></div>
                 
-                <!-- [수정됨] 레벨 배지가 잘리지 않도록 구조 변경 -->
+                <!-- 구조 수정: overflow-hidden을 내부 div로 이동하고 레벨 배지를 밖으로 뺌 -->
                 <div class="relative w-32 h-32 md:w-40 md:h-40 shrink-0">
                     <!-- 이미지는 이 안에서만 잘림 -->
                     <div class="w-full h-full rounded-full border-4 border-[#F25E00] shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center">
@@ -530,18 +533,7 @@
                         bgmStatus.innerText = 'Now Playing ♪';
                     })
                     .catch(e => {
-                        console.error('BGM Error:', e);
-                        bgmControl.classList.add('paused');
-                        if (e.name === 'NotAllowedError') {
-                            bgmStatus.innerText = 'Click to Play ♪';
-                        } else if (e.name === 'NotSupportedError') {
-                            bgmStatus.innerText = 'Format Error!';
-                            alert("브라우저가 이 오디오 형식을 지원하지 않습니다. (MP3 권장)");
-                        } else {
-                            bgmStatus.innerText = 'Check File Path!';
-                            // Only alert on first explicit error to avoid spam
-                            console.log("Audio play failed. Check if 'bgm.mp3' exists in the same folder.");
-                        }
+                        bgmStatus.innerText = 'Check File Path!';
                     });
             } else {
                 audio.pause();
@@ -558,17 +550,12 @@
                     bgmStatus.innerText = 'Now Playing ♪';
                 })
                 .catch(error => {
-                    // Auto-play prevented
-                    console.log('Autoplay prevented by browser.');
                     bgmControl.classList.add('paused');
                     bgmStatus.innerText = 'Click to Play ♪';
-                    
-                    // One-time click listener for autoplay
                     const startMusic = () => {
-                        audio.play().then(() => {
-                            bgmControl.classList.remove('paused');
-                            bgmStatus.innerText = 'Now Playing ♪';
-                        }).catch(e => console.error("Click play failed:", e));
+                        audio.play();
+                        bgmControl.classList.remove('paused');
+                        bgmStatus.innerText = 'Now Playing ♪';
                         document.removeEventListener('click', startMusic);
                     };
                     document.addEventListener('click', startMusic);
