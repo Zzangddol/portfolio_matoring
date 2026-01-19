@@ -76,7 +76,7 @@
 
     <!-- BGM Audio Element -->
     <!-- [중요] bgm.mp3 파일을 같은 폴더에 넣어주세요 -->
-    <audio id="bgmAudio" loop>
+    <audio id="메이플스토리-로그인.mp3" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
 
